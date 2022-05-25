@@ -4,16 +4,31 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+    //  내 번호 6개 저장
+    var mMyNumList = arrayOf(3, 5, 7, 8, 9, 11)
 
     //    컴퓨터가 뽑은 당첨번호를 6개 저장할 ArrayList 만들어주자
     val mWinNumList = ArrayList<Int>()
-//  랜덤 번호 6개를 집어넣을 텍스트 뷰 자료형의 어레이리스트를 만들자
+
+    //  랜덤 번호 6개를 집어넣을 텍스트 뷰 자료형의 어레이리스트를 만들자
     val mWinNumViewList = ArrayList<TextView>()
+
     //    보너스 숫자 저장할 멤버 변수 생성
     var mBonusNum = 0
+//    사용금액 / 당첨금액/ 당첨 횟수
+    var mUsedMoney = 0
+    var mEarnedMoney = 0L //30억이상의 당첨 대비, Long 타입
+
+    var firstCount = 0
+    var secondCount = 0
+    var thirdCount = 0
+    var fourthCount = 0
+    var fifthCount = 0
+    var loseCount = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -90,10 +105,87 @@ class MainActivity : AppCompatActivity() {
                 break
             }
         }
+        checkLottoRank()
     }
 
     fun checkLottoRank() {
 //        4. 비교
-//        순위 선정
+        var correctCount = 0
+//        //맞는지 테스트하는 방법2
+//        val tempList = arrayListOf<Int>(3,5,7,8,9,10)
+//
+//        mWinNumList.clear()
+//        mWinNumList.addAll(tempList)
+
+//        //맞는지 테스트하는 방법1
+//        mWinNumList.clear()
+//
+//        mWinNumList.add(3)
+//        mWinNumList.add(5)
+//        mWinNumList.add(7)
+//        mWinNumList.add(8)
+//        mWinNumList.add(9)
+//        mWinNumList.add(10)
+
+//      내 번호를 하나씩 조회 mMyNumlisi를 한칸씩 돌면서 myNum을 뽑아내겠
+        for (myNum in mMyNumList) {
+//            당첨 번호를 맞췄나?-> 당첨번호 목록에 내 번호가 들어있나?
+            if (mWinNumList.contains(myNum)) {
+                correctCount++
+            }
+
+        }
+
+
+//        순위 선정 (텍스트 뷰 출력)
+
+        when (correctCount) {
+            6 -> {
+                mEarnedMoney += 3000000000
+                firstCount++
+                Toast.makeText(this, "1등", Toast.LENGTH_SHORT).show()
+
+            }
+            5 -> {
+//                보너스 번호를 맞췄는지?-> 보너스 번호가 내 번호 목록에 들어 있나?
+                if (mMyNumList.contains(mBonusNum)) {
+                    mEarnedMoney += 50000000
+                    secondCount++
+                    Toast.makeText(this, "임시 2등", Toast.LENGTH_SHORT).show()
+
+                } else {
+                    mEarnedMoney += 2000000
+                    thirdCount ++
+                    Toast.makeText(this, "임시 3등", Toast.LENGTH_SHORT).show()
+                }
+            }
+            4 -> {
+                mEarnedMoney += 50000
+                fourthCount ++
+                Toast.makeText(this, "4등", Toast.LENGTH_SHORT).show()
+            }
+            3 -> {
+                mEarnedMoney += 50000
+                fifthCount ++
+                Toast.makeText(this, "5등", Toast.LENGTH_SHORT).show()
+            }
+            else -> {
+                loseCount ++
+                Toast.makeText(this, "낙첨", Toast.LENGTH_SHORT).show()
+
+            }
+        }
+//        if(correctCount == 6) {
+//
+//        }else if (correctCount == 5) {
+//
+//        }else if (correctCount == 4) {
+//
+//        }else if (correctCount == 3) {
+//
+//        }else {//낙첨
+//        }
+
+//        사용금액/ 당첨 금액 및 횟수 텍스트에 각각 반영
     }
 }
