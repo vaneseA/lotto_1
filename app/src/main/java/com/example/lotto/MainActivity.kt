@@ -2,6 +2,8 @@ package com.example.lotto
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
@@ -30,6 +32,29 @@ class MainActivity : AppCompatActivity() {
     var fourthCount = 0
     var fifthCount = 0
     var loseCount = 0
+//    핸들러로 쓰레드에 할일 할당 (postdelayed - 일정 시간 지난뒤에 할일 할당)
+    lateinit var mHandler: Handler
+
+
+//    핸들러가 반복 실행할 코드(로또 다시 구매)를 인터페이스 이용해 변수로 저장
+    val buyLottoRunnable = object  : Runnable {
+        override fun run() {
+//            쓴 돈이 1000만원이 안된다면 추가 구매
+            if (mUsedMoney < 10000000) {
+                buyLotto()
+
+//            핸들러에게 다음 할 일로, 이 코드를 다시 등록 (재귀함수)
+                mHandler.post(this)
+            }
+//            천만원이 넘었다면 할일 정지
+            else{
+
+                Toast.makeText(this@MainActivity,"자동 구매 완료",Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    var isAutoBuy = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -41,9 +66,38 @@ class MainActivity : AppCompatActivity() {
         buyBtn.setOnClickListener {
             buyLotto()
         }
+        autoBuyBtn.setOnClickListener {
+//            처음 눌리면 > 반복 구매 시작 >
+//            isAutoBuy = !isAutoBuy///////////////////////////이거지우니까 돌아감
+//            단순 반복 = > UI 갱신 속도가 못따라 온다.
+//            while (isAutoBuy){
+//                buyLotto()
+
+//                if (mUsedMoney >= 10000000) {
+//                    break
+//                }
+//            }
+//            1회 로또 구매 명령 >완료, 다시 1회 로또 구매................연속으로 실행
+            if (!isAutoBuy) {
+//                핸들러에게 할일로 처음 등록
+                mHandler.post(buyLottoRunnable)
+
+                isAutoBuy = true
+                autoBuyBtn.text = "자동 구매 중단"
+            } else {
+//                핸들러에 둥록된 다음 할 일(구매) 제거
+                mHandler.removeCallbacks(buyLottoRunnable)
+
+                isAutoBuy = false
+                autoBuyBtn.text = "자동 구매 반복"
+            }
+
+        }
     }
 
     fun setValues() {
+//      반복을 담당할 핸들러를 생성
+        mHandler = Handler(Looper.getMainLooper())
 
         mWinNumViewList.add(winNum1Txt)
         mWinNumViewList.add(winNum2Txt)
@@ -55,6 +109,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun buyLotto() {
+
+        mUsedMoney += 1000
 //      arrayList는 목록을 계속 누적
 //      당첨 번호 새로 뽑기전에 기존의 당첨번호는 전부 랜제 하고 다시 뽑자 = 초기화
         mWinNumList.clear()
@@ -166,7 +222,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "4등", Toast.LENGTH_SHORT).show()
             }
             3 -> {
-                mEarnedMoney += 50000
+                mEarnedMoney += 5000
                 fifthCount ++
                 Toast.makeText(this, "5등", Toast.LENGTH_SHORT).show()
             }
@@ -189,7 +245,7 @@ class MainActivity : AppCompatActivity() {
 
 //        사용금액/ 당첨 금액 및 횟수 텍스트에 각각 반영성
         userMoneyTxt.text = "${NumberFormat.getInstance().format(mUsedMoney)}원"
-        earnMoneyTxt.text = "${NumberFormat.getInstance().format(mUsedMoney)}원"
+        earnMoneyTxt.text = "${NumberFormat.getInstance().format(mEarnedMoney)}원"
 
         winRank1Txt.text = "1등 당첨 횟수 : ${firstCount}회"
         winRank2Txt.text = "2등 당첨 횟수 : ${secondCount}회"
