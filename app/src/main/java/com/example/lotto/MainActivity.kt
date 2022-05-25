@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
 //  랜덤 번호 6개를 집어넣을 텍스트 뷰 자료형의 어레이리스트를 만들자
     val mWinNumViewList = ArrayList<TextView>()
     //    보너스 숫자 저장할 멤버 변수 생성
-    val bonusNum = 0
+    var mBonusNum = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -80,7 +80,16 @@ class MainActivity : AppCompatActivity() {
 
         }
         Log.d("당첨 번호", mWinNumList.toString())
-//        3. 보너스 번호 하나 선정
+//        3. 보너스 번호 하나 선정 //텍스트뷰에 배치
+        while (true) {
+            val randomNum = (Math.random() * 45 + 1).toInt()
+
+            if (!mWinNumList.contains(randomNum)) {
+                mBonusNum = randomNum
+                bonusNumTxt.text = mBonusNum.toString()
+                break
+            }
+        }
     }
 
     fun checkLottoRank() {
