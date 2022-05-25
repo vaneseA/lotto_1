@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import java.text.NumberFormat
 
 class MainActivity : AppCompatActivity() {
     //  내 번호 6개 저장
@@ -186,6 +187,16 @@ class MainActivity : AppCompatActivity() {
 //        }else {//낙첨
 //        }
 
-//        사용금액/ 당첨 금액 및 횟수 텍스트에 각각 반영
+//        사용금액/ 당첨 금액 및 횟수 텍스트에 각각 반영성
+        userMoneyTxt.text = "${NumberFormat.getInstance().format(mUsedMoney)}원"
+        earnMoneyTxt.text = "${NumberFormat.getInstance().format(mUsedMoney)}원"
+
+        winRank1Txt.text = "1등 당첨 횟수 : ${firstCount}회"
+        winRank2Txt.text = "2등 당첨 횟수 : ${secondCount}회"
+        winRank3Txt.text = "3등 당첨 횟수 : ${thirdCount}회"
+        winRank4Txt.text = "4등 당첨 횟수 : ${fourthCount}회"
+        winRank5Txt.text = "5등 당첨 횟수 : ${fifthCount}회"
+        loseTxt.text = "낙첨 횟수 : ${loseCount}회"
     }
+
 }
